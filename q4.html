@@ -6,8 +6,17 @@
     <title>Document</title>
 </head>
 <body>
+
+<div class="main" style="text-align: center;">
+  <h1>cafes and places.</h1>
+    <h2>Logic Square Question 4th</h2>
+    <details style="color: black; text-align: center;">
+        <summary>Answer Find....?</summary>
+        <p>Please Inspect the web page.</p>
+      </details>
+    </div>
+
     <script>
-        // App.js
 
 import React, { useState, useEffect } from 'react';
 
@@ -24,7 +33,7 @@ const App = () => {
   }, []);
 
   useEffect(() => {
-    // Save data to local storage whenever employees are updated
+  
     localStorage.setItem('employees', JSON.stringify(employees));
     updateCounts(employees);
   }, [employees]);
