@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        // App.js
+
+import React, { useState, useEffect } from 'react';
+
+const App = () => {
+  const [employees, setEmployees] = useState([]);
+  const [totalEmployees, setTotalEmployees] = useState(0);
+  const [availableEmployees, setAvailableEmployees] = useState(0);
+
+  useEffect(() => {
+    // Load data from local storage on component mount
+    const storedEmployees = JSON.parse(localStorage.getItem('employees')) || [];
+    setEmployees(storedEmployees);
+    updateCounts(storedEmployees);
+  }, []);
+
+  useEffect(() => {
+    // Save data to local storage whenever employees are updated
+    localStorage.setItem('employees', JSON.stringify(employees));
+    updateCounts(employees);
+  }, [employees]);
+
+  const updateCounts = (employees) => {
+    setTotalEmployees(employees.length);
+    setAvailableEmployees(employees.filter(employee => employee.available).length);
+  };
+
+  const addEmployee = (newEmployee) => {
+    setEmployees([newEmployee, ...employees]);
+  };
+
+  const editEmployee = (editedEmployee) => {
+    setEmployees(employees.map(employee =>
+      employee.id === editedEmployee.id ? editedEmployee : employee
+    ));
+  };
+
+  const deleteEmployee = (employeeId) => {
+    setEmployees(employees.filter(employee => employee.id !== employeeId));
+  };
+
+  const toggleAvailability = (employeeId) => {
+    setEmployees(employees.map(employee =>
+      employee.id === employeeId ? { ...employee, available: !employee.available } : employee
+    ));
+  };
+
+  return (
+    <div className="app">
+      {/* Left side for overall view */}
+      <div className="dashboard-overview">
+        <div>Total Employees: {totalEmployees}</div>
+        <div>Available Employees: {availableEmployees}</div>
+        <button onClick={() => /* Open Add Employee Modal */}>Add Employee</button>
+      </div>
+
+      {/* Right side for listing employees */}
+      <div className="employee-list">
+        {/* Employee listing component with pagination and search functionality */}
+        <EmployeeList
+          employees={employees}
+          onEdit={editEmployee}
+          onDelete={deleteEmployee}
+          onToggleAvailability={toggleAvailability}
+        />
+      </div>
+
+      {/* Add Employee Modal */}
+      {/* Edit Employee Modal */}
+      {/* Delete Employee Confirmation Dialog */}
+    </div>
+  );
+};
+
+// EmployeeList.js
+
+import React, { useState } from 'react';
+
+const EmployeeList = ({ employees, onEdit, onDelete, onToggleAvailability }) => {
+  const [searchTerm, setSearchTerm] = useState('');
+
+  const filteredEmployees = employees.filter(employee =>
+    employee.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    employee.designation.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  return (
+    <div className="employee-list">
+      {/* Search input */}
+      <input
+        type="text"
+        placeholder="Search by name or designation"
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+      />
+
+      {/* Employee table with pagination or load on scroll */}
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Designation</th>
+            <th>Age</th>
+            <th>Department</th>
+            <th>Availability</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {filteredEmployees.map(employee => (
+            <tr key={employee.id}>
+              <td>{employee.name}</td>
+              <td>{employee.designation}</td>
+              <td>{employee.age}</td>
+              <td>{employee.department}</td>
+              <td>
+                <button onClick={() => onToggleAvailability(employee.id)}>
+                  {employee.available ? 'Available' : 'Not Available'}
+                </button>
+              </td>
+              <td>
+                <button onClick={() => /* Open Edit Employee Modal */}>Edit</button>
+                <button onClick={() => /* Open Delete Employee Confirmation Dialog */}>Delete</button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+};
+
+export default EmployeeList;
+
+    </script>
+</body>
+</html>
