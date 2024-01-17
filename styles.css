@@ -29,3 +29,7 @@ th, td {
 th {
     background-color: #f2f2f2;
 }
+a:hover{
+    color: red;
+   }
+
